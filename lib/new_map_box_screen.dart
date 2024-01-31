@@ -1,7 +1,9 @@
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 
+import 'package:demo_map/map_box_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
@@ -18,6 +20,12 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class MapboxMapExample extends StatefulWidget {
+  String fileUrl;
+  final LatLng latlng;
+
+
+  MapboxMapExample({required this.fileUrl, required this.latlng});
+
   @override
   _MapboxMapExampleState createState() => _MapboxMapExampleState();
 }
@@ -49,10 +57,10 @@ class _MapboxMapExampleState extends State<MapboxMapExample> {
 
     super.initState();
   }
-  List<LatLng> pathPoints = [
-    LatLng(22.6980, 75.8683),
-    LatLng(22.6963, 75.8875) // Point B
-  ];
+  // List<LatLng> pathPoints = [
+  //   LatLng(22.6980, 75.8683),
+  //   LatLng(22.6963, 75.8875) // Point B
+  // ];
   void drawPath() {
 
     mapController!.addLineLayer(
@@ -76,12 +84,18 @@ class _MapboxMapExampleState extends State<MapboxMapExample> {
       body: MapboxMap(
         accessToken: accessToken,
         onMapCreated: _onMapCreated,
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(22.6980, 75.8683), // San Francisco coordinates
+        
+
+        initialCameraPosition:  CameraPosition(
+          target: widget.latlng, // San Francisco coordinates
+          // target: LatLng(43.681878, 12.116416), // San Francisco coordinates
+          // target: LatLng(22.6980, 75.8683), // San Francisco coordinates
           zoom: 13.0,
         ),
+
         myLocationEnabled: true,
         myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
+        
 
       ),
     );
@@ -91,5 +105,35 @@ class _MapboxMapExampleState extends State<MapboxMapExample> {
     setState(() {
       mapController = controller;
     });
+     MapBoxServices.getGPXString(widget.fileUrl).then((value){
+       print('sdfadsfasdsfas $value');
+       var sd = MapBoxServices.parseGPXFileFromString(value);
+       log('sdfadsfas $sd');
+       List<LatLng> latLongList = List.generate(sd.length, (index) => LatLng(sd[index]['lat']!, sd[index]['lon']!));
+       mapController!.addLines(
+         [
+         LineOptions(
+           geometry: latLongList
+
+         ),
+         ]
+       );
+     });
+
+    // mapController!.addLineLayer(
+    //     'fills',
+    //     'lines',
+    //     LineLayerProperties(
+    //       lineColor: Colors.blue.toHexStringRGB(),
+    //       lineCap: 'round',
+    //       lineJoin: 'round',
+    //       lineWidth: 3,
+    //     )
+    // );
+
+
+
+    // mapController.adds
+    // mapController.addT
   }
 }

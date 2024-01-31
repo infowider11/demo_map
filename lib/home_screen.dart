@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
             RoundEdgedButton(
               text: "Map box Map",
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (c)=>MapboxMapExample()));
+                // Navigator.push(context, MaterialPageRoute(builder: (c)=>MapboxMapExample()));
               },
               verticalMargin: 15,
               height: 65,
